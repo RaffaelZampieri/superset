@@ -138,3 +138,8 @@ PROJECT.md
 oxc-custom-build/
 *.code-workspace
 *.duckdb
+
+# SSL certificates — never commit private keys or certs
+docker/ssl/*.pem
+docker/ssl/*.key
+docker/.env

@@ -24,18 +24,23 @@ ARG PY_VER=3.11.14-slim-trixie
 ARG BUILDPLATFORM=${BUILDPLATFORM:-amd64}
 
 # Include translations in the final build
-ARG BUILD_TRANSLATIONS="false"
+ARG BUILD_TRANSLATIONS="true"
 
 ######################################################################
 # superset-node-ci used as a base for building frontend assets and CI
 ######################################################################
-FROM --platform=${BUILDPLATFORM} node:20-trixie-slim AS superset-node-ci
+FROM --platform=${BUILDPLATFORM} node:22-trixie-slim AS superset-node-ci
 ARG BUILD_TRANSLATIONS
 ENV BUILD_TRANSLATIONS=${BUILD_TRANSLATIONS}
 ARG DEV_MODE="false"           # Skip frontend build in dev mode
 ENV DEV_MODE=${DEV_MODE}
 
 COPY docker/ /app/docker/
+# Ensure npm can trust our corporate/self-signed CA during build by pointing
+# npm at the provided PEM file. The file is mounted/copied into /app/docker.
+ENV NPM_CONFIG_CAFILE=/app/docker/ssl/server.pem
+RUN npm config set cafile /app/docker/ssl/server.pem || true
+RUN npm config set strict-ssl false || true
 # Arguments for build configuration
 ARG NPM_BUILD_CMD="build"
 
@@ -44,7 +49,8 @@ RUN /app/docker/apt-install.sh build-essential python3 zstd
 
 # Define environment variables for frontend build
 ENV BUILD_CMD=${NPM_BUILD_CMD} \
-    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true
+    PUPPETEER_SKIP_CHROMIUM_DOWNLOAD=true \
+		CYPRESS_INSTALL_BINARY=0
 
 # Run the frontend memory monitoring script
 RUN /app/docker/frontend-mem-nag.sh
@@ -111,8 +117,20 @@ RUN useradd --user-group -d ${SUPERSET_HOME} -m --no-log-init --shell /bin/bash 
     && chown -R superset:superset ${SUPERSET_HOME}
 
 # Some bash scripts needed throughout the layers
+# Copy our CA certificate into the image early so subsequent pip installs
+# during the build can trust a corporate/self-signed root certificate.
+COPY --chmod=644 docker/ssl/server.pem /usr/local/share/ca-certificates/server.crt
+RUN update-ca-certificates || true
 COPY --chmod=755 docker/*.sh /app/docker/
 
+# If the build environment intercepts HTTPS (corporate proxy), pip may fail
+# certificate verification. Add a pip config that marks PyPI hosts as
+# trusted so builds succeed in these environments. This is only for local
+# development image builds.
+RUN mkdir -p /etc && printf '[global]\ntrusted-host =\n    pypi.org\n    files.pythonhosted.org\n' > /etc/pip.conf
+
+# Install uv (and other early Python utilities)
+ENV UV_NATIVE_TLS=1
 RUN pip install --no-cache-dir --upgrade uv
 
 # Using uv as it's faster/simpler than pip
@@ -133,8 +151,12 @@ RUN --mount=type=cache,target=/root/.cache/uv \
     . /app/.venv/bin/activate && /app/docker/pip-install.sh --requires-build-essential -r requirements/translations.txt
 
 COPY superset/translations/ /app/translations_mo/
+# Compile only the locales we care about to avoid failures from unrelated
+# translation files with incompatible placeholders (e.g., some third-party
+# language packs may have formatting mismatches). We only need pt and pt_BR
+# for the Brazilian Portuguese UI to work.
 RUN if [ "${BUILD_TRANSLATIONS}" = "true" ]; then \
-        pybabel compile -d /app/translations_mo | true; \
+        pybabel compile -d /app/translations_mo -l pt -l pt_BR || true; \
     fi; \
     rm -f /app/translations_mo/*/*/*.[po,json]
 
@@ -202,6 +224,8 @@ RUN mkdir -p /app/data && chown -R superset:superset /app/data
 
 # Copy compiled things from previous stages
 COPY --from=superset-node /app/superset/static/assets superset/static/assets
+# service-worker.js is output by webpack one level above /assets (i.e. superset/static/)
+COPY --from=superset-node /app/superset/static/service-worker.js superset/static/service-worker.js
 
 # TODO, when the next version comes out, use --exclude superset/translations
 COPY superset superset
@@ -211,6 +235,11 @@ RUN rm superset/translations/*/*/*.po
 # Merging translations from backend and frontend stages
 COPY --from=superset-node /app/superset/translations superset/translations
 COPY --from=python-translation-compiler /app/translations_mo superset/translations
+
+# Copy the spinner SVG from the frontend source tree so views/base.py can
+# resolve it at runtime (the path it builds points into superset-frontend/).
+COPY superset-frontend/packages/superset-ui-core/src/components/assets/images/loading.svg \
+     superset-frontend/packages/superset-ui-core/src/components/assets/images/loading.svg
 
 HEALTHCHECK CMD /app/docker/docker-healthcheck.sh
 CMD ["/app/docker/entrypoints/run-server.sh"]
@@ -283,3 +312,4 @@ USER root
 RUN uv pip install .[duckdb]
 USER superset
 CMD ["/app/docker/entrypoints/docker-ci.sh"]
+

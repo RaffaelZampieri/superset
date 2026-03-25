@@ -1,0 +1,173 @@
+# -----------------------------------------------------------------------
+# SSL + Email Alerts/Reports — standalone production compose file.
+#
+# Usage:
+#   docker compose -f docker-compose-ssl.yml up -d
+#
+# Prerequisites (before running):
+#   1. Place your PEM certificate (cert chain + private key, combined) at:
+#        docker/ssl/server.pem
+#      This file is git-ignored and must be placed manually on each host.
+#
+#   2. Fill in your SMTP credentials in:
+#        docker/.env-local
+#      (copy from docker/.env-local.example if it doesn't exist yet)
+#
+# What this file does:
+#   - Pulls the pre-built Superset image (controlled by TAG env var)
+#   - Spins up Redis and PostgreSQL alongside Superset
+#   - Mounts docker/ssl/ into all Superset containers so the Python SMTP
+#     client can trust the custom certificate during STARTTLS handshakes
+#   - Passes SMTP credentials from .env-local into the Superset services
+#     as environment variables consumed by superset_config_docker.py
+#   - Installs Playwright (headless Chromium) in the worker for screenshots
+#   - Installs custom CA certificate system-wide for corporate proxy support
+# -----------------------------------------------------------------------
+
+x-superset-image: &superset-image superset-local:translations-test-N1
+
+# Volumes shared by all Superset services: the docker/ config dir (which
+# contains docker/ssl/server.pem and superset_config_docker.py) plus the
+# persistent home volume.
+x-superset-ssl-volumes: &superset-ssl-volumes
+  - ./docker:/app/docker
+  - superset_home:/app/superset_home
+  # translations are baked into the local image when BUILD_TRANSLATIONS=true
+
+# SMTP + SSL environment variables injected into every Superset service.
+# Values come from docker/.env-local (git-ignored, credentials safe).
+x-smtp-environment: &smtp-environment
+  SUPERSET_SMTP_SSL_CERT: /app/docker/ssl/server.pem
+  UV_NATIVE_TLS: "1"
+
+services:
+
+  # ── Infrastructure ─────────────────────────────────────────────────────────
+  redis:
+    image: redis:7
+    container_name: superset_cache
+    restart: unless-stopped
+    volumes:
+      - redis:/data
+
+  db:
+    env_file:
+      - path: docker/.env # default
+        required: true
+      - path: docker/.env-local # optional override
+        required: false
+    image: postgres:17
+    container_name: superset_db
+    restart: unless-stopped
+    volumes:
+      - db_home:/var/lib/postgresql/data
+      - ./docker/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d
+
+  # ── Superset app ───────────────────────────────────────────────────────────
+  superset:
+    env_file:
+      - path: docker/.env
+        required: true
+      - path: docker/.env-local
+        required: false
+    build:
+      context: .
+      target: dev
+      args:
+        BUILD_TRANSLATIONS: "true"
+        DEV_MODE: "false"
+    image: *superset-image
+    container_name: superset_app
+    # Install the custom CA cert (for corporate TLS inspection proxy) before
+    # running the normal bootstrap so that uv/pip can reach pypi.org.
+    command: ["sh", "-c", "/app/docker/install-ca-cert.sh && /app/docker/docker-bootstrap.sh app-gunicorn"]
+    user: "root"
+    restart: unless-stopped
+    ports:
+      - 8088:8088
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    volumes: *superset-ssl-volumes
+    environment:
+      <<: *smtp-environment
+
+  # ── Init container (DB migrations, admin user creation) ───────────────────
+  superset-init:
+    image: *superset-image
+    container_name: superset_init
+    command: ["sh", "-c", "/app/docker/install-ca-cert.sh && /app/docker/docker-init.sh"]
+    env_file:
+      - path: docker/.env
+        required: true
+      - path: docker/.env-local
+        required: false
+    depends_on:
+      db:
+        condition: service_started
+      redis:
+        condition: service_started
+    user: "root"
+    volumes: *superset-ssl-volumes
+    environment:
+      <<: *smtp-environment
+    healthcheck:
+      disable: true
+
+  # ── Celery worker (sends alert/report emails) ──────────────────────────────
+  superset-worker:
+    image: *superset-image
+    container_name: superset_worker
+    # Install CA cert, then Playwright (for screenshots), then start worker
+    command: ["sh", "-c", "/app/docker/install-ca-cert.sh && /app/docker/install-playwright.sh && /app/docker/docker-bootstrap.sh worker"]
+    env_file:
+      - path: docker/.env
+        required: true
+      - path: docker/.env-local
+        required: false
+    restart: unless-stopped
+    depends_on:
+      superset:                                                                                                                                                           
+        condition: service_started
+      superset-init:
+        condition: service_completed_successfully
+    user: "root"
+    volumes: *superset-ssl-volumes
+    environment:
+      <<: *smtp-environment
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "celery -A superset.tasks.celery_app:app inspect ping -d celery@$$HOSTNAME",
+        ]
+
+  # ── Celery beat (schedules alert/report jobs) ──────────────────────────────
+  superset-worker-beat:
+    image: *superset-image
+    container_name: superset_worker_beat
+    command: ["sh", "-c", "/app/docker/install-ca-cert.sh && /app/docker/docker-bootstrap.sh beat"]
+    env_file:
+      - path: docker/.env
+        required: true
+      - path: docker/.env-local
+        required: false
+    restart: unless-stopped
+    depends_on:
+      superset-init:
+        condition: service_completed_successfully
+    user: "root"
+    volumes: *superset-ssl-volumes
+    environment:
+      <<: *smtp-environment
+    healthcheck:
+      disable: true
+
+volumes:
+  superset_home:
+    external: false
+  db_home:
+    external: false
+  redis:
+    external: false
+

@@ -902,7 +902,6 @@ class Superset(BaseSupersetView):
         return json_success(json.dumps(sanitize_datasource_data(datasource.data)))
 
     @event_logger.log_this
-    @has_access
     @expose("/language_pack/<lang>/")
     def language_pack(self, lang: str) -> FlaskResponse:
         # Only allow expected language formats like "en", "pt_BR", etc.
@@ -913,7 +912,7 @@ class Superset(BaseSupersetView):
         file_path = safe_join(base_dir, lang, "LC_MESSAGES", "messages.json")
 
         if file_path and os.path.isfile(file_path):
-            return send_file(file_path, mimetype="application/json")
+            return send_file(file_path, mimetype="application/json", max_age=0)
 
         return json_error_response(
             "Language pack doesn't exist on the server", status=404

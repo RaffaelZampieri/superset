@@ -477,7 +477,7 @@ def cached_common_bootstrap_data(  # pylint: disable=unused-argument
     )
 
     if isinstance(locale, Locale):
-        language = locale.language
+        language = str(locale) #locale.language
     elif isinstance(locale, str):
         language = locale
     else:
