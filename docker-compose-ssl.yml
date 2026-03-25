@@ -24,7 +24,7 @@
 #   - Installs custom CA certificate system-wide for corporate proxy support
 # -----------------------------------------------------------------------
 
-x-superset-image: &superset-image superset-local:translations-test-N1
+x-superset-image: &superset-image superset-local:translations
 
 # Volumes shared by all Superset services: the docker/ config dir (which
 # contains docker/ssl/server.pem and superset_config_docker.py) plus the
