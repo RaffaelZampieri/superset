@@ -18,7 +18,6 @@ server {
         port_in_redirect off;
         proxy_connect_timeout 300;
     }
-
 }
 
 # SSL 
