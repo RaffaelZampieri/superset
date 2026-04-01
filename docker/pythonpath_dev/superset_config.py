@@ -123,9 +123,9 @@ LANGUAGES = {
 
 SMTP_HOST=os.getenv("SMTP_HOST")
 SMTP_PORT=os.getenv("SMTP_PORT")
-SMTP_STARTTLS=os.getenv("SMTP_STARTTLS")
-SMTP_SSL_SERVER_AUTH=os.getenv("SMTP_SSL_SERVER_AUTH") 
-SMTP_SSL=os.getenv("SMTP_SSL")
+SMTP_STARTTLS = os.getenv("SMTP_STARTTLS", "false").lower() == "true"
+SMTP_SSL_SERVER_AUTH = os.getenv("SMTP_SSL_SERVER_AUTH", "false").lower() == "true"
+SMTP_SSL = os.getenv("SMTP_SSL", "false").lower() == "true"
 SMTP_USER=os.getenv("SMTP_USER") 
 SMTP_PASSWORD=os.getenv("SMTP_PASSWORD") 
 SMTP_MAIL_FROM=os.getenv("SMTP_MAIL_FROM")
@@ -138,3 +138,4 @@ FEATURE_FLAGS = {
     'ALERT_REPORTS': True,
     'PLAYWRIGHT_REPORTS_AND_THUMBNAILS': True,
 }
+APP_ICON = "/static/assets/images/superset-logo-horiz.png"
