@@ -121,6 +121,30 @@ LANGUAGES = {
     "pt_BR": {"flag": "br", "name": "Brazilian Portuguese"},
 }
 
+BABEL_DEFAULT_LOCALE = "pt_BR"
+
+D3_FORMAT = {
+    "decimal": ",",        
+    "thousands": ".",      
+    "grouping": [3],       
+    "currency": ["R$ ", ""]
+}
+
+D3_TIME_FORMAT = {
+    "dateTime": "%d/%m/%Y, %H:%M:%S",
+    "date": "%d/%m/%Y",
+    "time": "%H:%M:%S",
+    "periods": ["AM", "PM"],
+    "days": ["domingo", "segunda", "terça", "quarta", "quinta", "sexta", "sábado"],
+    "shortDays": ["dom", "seg", "ter", "qua", "qui", "sex", "sab"],
+    "months": ["janeiro", "fevereiro", "março", "abril", "maio", "junho",
+               "julho", "agosto", "setembro", "outubro", "novembro", "dezembro"],
+    "shortMonths": ["jan", "fev", "mar", "abr", "mai", "jun",
+                    "jul", "ago", "set", "out", "nov", "dez"]
+}
+
+CURRENCIES = ["BRL","USD", "EUR"]
+
 SMTP_HOST=os.getenv("SMTP_HOST")
 SMTP_PORT=os.getenv("SMTP_PORT")
 SMTP_STARTTLS = os.getenv("SMTP_STARTTLS", "false").lower() == "true"
