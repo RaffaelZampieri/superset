@@ -80,7 +80,6 @@ class CeleryConfig:
 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True, "DATASET_FOLDERS": True}
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = False #True
 
 
@@ -158,8 +157,34 @@ ENABLE_UI_THEME_ADMINISTRATION = True
 
 BUILD_TRANSLATIONS = True
 
+ENABLE_CORS = True
+CORS_OPTIONS = {
+    "origins": "*",
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"],
+}
+
 FEATURE_FLAGS = {
     'ALERT_REPORTS': True,
+    'DATASET_FOLDERS': True,
     'PLAYWRIGHT_REPORTS_AND_THUMBNAILS': True,
+    'DASHBOARD_RBAC': True,
+    'EMBEDDED_SUPERSET': True,
+    'DISABLE_EMBEDDED_SUPERSET_LOGOUT': True,
 }
+
+TALISMAN_ENABLED = True
+TALISMAN_CONFIG = {
+        "content_security_policy": {
+            "frame-ancestors": ["'self'", 
+                                "http://localhost",
+                                "http://localhost:8088",
+                                ".jacomar.com.br"],
+            },
+        "force_https": False,
+        "session_cookie_secure": False,
+        }
+
+PUBLIC_ROLE_LIKE = "Gamma"
+
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
