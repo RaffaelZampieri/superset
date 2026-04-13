@@ -91,6 +91,12 @@ services:
     volumes: *superset-ssl-volumes
     environment:
       <<: *smtp-environment
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:8088/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
   # ── Init container (DB migrations, admin user creation) ───────────────────
   superset-init:
@@ -135,9 +141,10 @@ services:
       - ./docker/nginx/ssl:/etc/ssl/certs:ro
     healthcheck:
       test: ["CMD-SHELL", "curl -sS http://localhost/ || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      interval: 10s
+      timeout: 5s
+      retries: 15
+      start_period: 30s
 
   # ── Celery worker (sends alert/report emails) ──────────────────────────────
   superset-worker:
