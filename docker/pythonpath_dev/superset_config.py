@@ -171,9 +171,18 @@ FEATURE_FLAGS = {
     'DASHBOARD_RBAC': True,
     'EMBEDDED_SUPERSET': True,
     'DISABLE_EMBEDDED_SUPERSET_LOGOUT': True,
+    'GUEST_TOKEN': True,
 }
 
-TALISMAN_ENABLED = True
+#SESSION_COOKIE_SAMESITE = None
+#SESSION_COOKIE_SECURE = True
+
+GUEST_TOKEN_HEADER_NAME = "X-GuestToken"
+GUEST_TOKEN_JWT_EXP_SECONDS = 300
+ENABLE_GUEST_TOKEN = True
+HTTP_HEADERS={"X-Frame-Options":"ALLOWALL"}
+
+TALISMAN_ENABLED = False
 TALISMAN_CONFIG = {
         "content_security_policy": {
             "frame-ancestors": ["'self'", 
