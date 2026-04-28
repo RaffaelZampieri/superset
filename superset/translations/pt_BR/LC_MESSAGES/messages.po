@@ -119,7 +119,7 @@ msgstr " expressão necessária para aderir ao "
 
 #, fuzzy
 msgid " for details."
-msgstr "Totais"
+msgstr " para detalhes."
 
 #, python-format
 msgid " near '%(highlight)s'"
@@ -4904,7 +4904,7 @@ msgstr "Largura mínima"
 
 #, fuzzy
 msgid "Details"
-msgstr "Totais"
+msgstr "Detalhes"
 
 msgid "Details of the certification"
 msgstr "Detalhes da certificação"
@@ -5521,7 +5521,7 @@ msgstr "Elevação"
 
 #, fuzzy
 msgid "Email"
-msgstr "Totais"
+msgstr "E-mail"
 
 #, fuzzy
 msgid "Email is required"
@@ -5529,7 +5529,7 @@ msgstr "O valor é necessário"
 
 #, fuzzy
 msgid "Email link"
-msgstr "Totais"
+msgstr "Link de e-mail"
 
 msgid "Email reports active"
 msgstr "Relatórios por e-mail ativo"
@@ -6179,7 +6179,7 @@ msgid "Factor to multiply the metric by"
 msgstr "Fator para multiplicar a métrica por"
 
 msgid "Fail login count"
-msgstr ""
+msgstr "Contagem de falhas de login"
 
 msgid "Failed"
 msgstr "Falhou"
@@ -6447,7 +6447,7 @@ msgstr ""
 
 #, fuzzy
 msgid "Find"
-msgstr "em"
+msgstr "Buscar"
 
 msgid "Finish"
 msgstr "Finalizar"
@@ -6457,11 +6457,11 @@ msgstr "Primeiro"
 
 #, fuzzy
 msgid "First Name"
-msgstr "Nome do gráfico"
+msgstr "Primeiro nome"
 
 #, fuzzy
 msgid "First name"
-msgstr "Nome do gráfico"
+msgstr "Primeiro nome"
 
 #, fuzzy
 msgid "First name is required"
@@ -7599,7 +7599,7 @@ msgstr "Último"
 
 #, fuzzy
 msgid "Last Name"
-msgstr "nome do conjunto de dados"
+msgstr "Último nome"
 
 #, python-format
 msgid "Last Updated %s"
@@ -7630,11 +7630,11 @@ msgstr "mês passado"
 
 #, fuzzy
 msgid "Last name"
-msgstr "nome do conjunto de dados"
+msgstr "Último nome"
 
 #, fuzzy
 msgid "Last name is required"
-msgstr "O nome é obrigatório"
+msgstr "Último nome é obrigatório"
 
 #, fuzzy
 msgid "Last quarter"
@@ -7642,7 +7642,7 @@ msgstr "último trimestre"
 
 #, fuzzy
 msgid "Last queried at"
-msgstr "último trimestre"
+msgstr "Última consulta em"
 
 msgid "Last run"
 msgstr "Última execução"
@@ -7657,7 +7657,7 @@ msgstr "ano passado"
 
 #, fuzzy
 msgid "Lat"
-msgstr "plano"
+msgstr "Lat"
 
 msgid "Latitude"
 msgstr "Latitude"
@@ -7667,29 +7667,29 @@ msgstr "Latitude da janela de visualização padrão"
 
 #, fuzzy
 msgid "Layer"
-msgstr "ano"
+msgstr "Camada"
 
 #, fuzzy
 msgid "Layer Name"
-msgstr "Nome do alerta"
+msgstr "Nome da camada"
 
 msgid "Layer URL"
-msgstr ""
+msgstr "URL da camada"
 
 msgid "Layer configuration"
 msgstr "Configuração de camadas"
 
 #, fuzzy
 msgid "Layer title"
-msgstr "Título do gráfico"
+msgstr "Título da camada"
 
 #, fuzzy
 msgid "Layer type"
-msgstr "Tipo do filtro"
+msgstr "Tipo de camada"
 
 #, fuzzy
 msgid "Layers"
-msgstr "alertas"
+msgstr "Camadas"
 
 msgid "Layout"
 msgstr "Layout"
@@ -15154,13 +15154,13 @@ msgstr "Formato do valor"
 
 #, fuzzy
 msgid "Value greater than"
-msgstr "O valor deve ser maior que 0"
+msgstr "Valor maior que"
 
 msgid "Value is required"
 msgstr "O valor é necessário"
 
 msgid "Value less than"
-msgstr ""
+msgstr "Valor menor que"
 
 #, fuzzy
 msgid "Value must be 0 or greater"
@@ -15180,7 +15180,7 @@ msgid "Values dependent on"
 msgstr "Valores dependentes de"
 
 msgid "Values less than this percentage will be grouped into the Other category."
-msgstr ""
+msgstr "Valores menores que essa porcentagem serão agrupados na categoria Outros."
 
 msgid ""
 "Values selected in other filters will affect the filter options to only show "
@@ -15202,7 +15202,7 @@ msgid "Vertical (Left)"
 msgstr "Vertical (esquerda)"
 
 msgid "Vertical layout (rows)"
-msgstr ""
+msgstr "Layout vertical (linhas)"
 
 msgid "View"
 msgstr "Ver"
@@ -15386,7 +15386,7 @@ msgid "Want to add a new database?"
 msgstr "Deseja adicionar um novo banco de dados?"
 
 msgid "Warehouse"
-msgstr ""
+msgstr "Armazém"
 
 msgid "Warning"
 msgstr "Advertência"
