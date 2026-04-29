@@ -26,16 +26,6 @@ SQLALCHEMY_DATABASE_URI = (
     f"{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_DB}"
 )
 
-SQLALCHEMY_EXAMPLES_URI = os.getenv(
-    "SUPERSET__SQLALCHEMY_EXAMPLES_URI",
-    (
-        f"{DATABASE_DIALECT}://"
-        f"{EXAMPLES_USER}:{EXAMPLES_PASSWORD}@"
-        f"{EXAMPLES_HOST}:{EXAMPLES_PORT}/{EXAMPLES_DB}"
-    ),
-)
-
-
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 REDIS_CELERY_DB = os.getenv("REDIS_CELERY_DB", "0")
@@ -45,7 +35,7 @@ RESULTS_BACKEND = FileSystemCache("/app/superset_home/sqllab")
 
 CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
-    "CACHE_DEFAULT_TIMEOUT": 300,
+    "CACHE_DEFAULT_TIMEOUT": 3600,
     "CACHE_KEY_PREFIX": "superset_",
     "CACHE_REDIS_HOST": REDIS_HOST,
     "CACHE_REDIS_PORT": REDIS_PORT,
@@ -75,13 +65,19 @@ class CeleryConfig:
             "task": "reports.prune_log",
             "schedule": crontab(minute=10, hour=0),
         },
+        'cache-warmup-hourly': {
+            'task': 'cache-warmup',
+            'schedule': crontab(minute=1, hour='*'),
+            'kwargs': {
+                'strategy_name': 'dummy',
+            },
+        },
     }
 
 
 CELERY_CONFIG = CeleryConfig
 
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = False #True
-
 
 WEBDRIVER_BASEURL = "http://superset:8088/"
 WEBDRIVER_BASEURL_USER_FRIENDLY = (
