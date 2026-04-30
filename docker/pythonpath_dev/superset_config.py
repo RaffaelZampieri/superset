@@ -35,14 +35,32 @@ RESULTS_BACKEND = FileSystemCache("/app/superset_home/sqllab")
 
 CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
-    "CACHE_DEFAULT_TIMEOUT": 3600,
+    "CACHE_DEFAULT_TIMEOUT": 24 * 3600,
     "CACHE_KEY_PREFIX": "superset_",
     "CACHE_REDIS_HOST": REDIS_HOST,
     "CACHE_REDIS_PORT": REDIS_PORT,
     "CACHE_REDIS_DB": REDIS_RESULTS_DB,
 }
 DATA_CACHE_CONFIG = CACHE_CONFIG
-THUMBNAIL_CACHE_CONFIG = CACHE_CONFIG
+
+FILTER_STATE_CACHE_CONFIG = {
+    **CACHE_CONFIG,
+    'CACHE_KEY_PREFIX': 'superset_filter_cache',
+    'CACHE_DEFAULT_TIMEOUT': 7776000,
+}
+
+EXPLORE_FORM_DATA_CACHE_CONFIG = {
+    **CACHE_CONFIG,
+    'CACHE_KEY_PREFIX': 'superset_explore_form_data_cache',
+    'CACHE_DEFAULT_TIMEOUT': 604800,
+}
+
+THUMBNAIL_CACHE_CONFIG = {
+    **CACHE_CONFIG,
+    'CACHE_KEY_PREFIX': 'superset_thumb_',
+    'CACHE_DEFAULT_TIMEOUT': 604800,
+    'CACHE_NO_NULL_WARNING': True,
+}
 
 
 class CeleryConfig:
@@ -69,7 +87,9 @@ class CeleryConfig:
             'task': 'cache-warmup',
             'schedule': crontab(minute=1, hour='*'),
             'kwargs': {
-                'strategy_name': 'dummy',
+                'strategy_name': 'top_n_dashboards',
+                'top_n': 10,
+                'since': '7 days ago',
             },
         },
     }
@@ -163,6 +183,7 @@ CORS_OPTIONS = {
 FEATURE_FLAGS = {
     'ALERT_REPORTS': True,
     'DATASET_FOLDERS': True,
+    'THUMBNAILS': True,
     'PLAYWRIGHT_REPORTS_AND_THUMBNAILS': True,
     'DASHBOARD_RBAC': True,
     'EMBEDDED_SUPERSET': True,
