@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import sys
@@ -189,6 +190,7 @@ FEATURE_FLAGS = {
     'EMBEDDED_SUPERSET': True,
     'DISABLE_EMBEDDED_SUPERSET_LOGOUT': True,
     'GUEST_TOKEN': True,
+    'ALLOW_FULL_CSV_EXPORT': True,
 }
 
 #SESSION_COOKIE_SAMESITE = None
@@ -214,3 +216,27 @@ TALISMAN_CONFIG = {
 PUBLIC_ROLE_LIKE = "Gamma"
 
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
+
+import ldap
+from flask_appbuilder.security.manager import AUTH_LDAP
+AUTH_TYPE = AUTH_LDAP
+AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION_ROLE = "Gamma"
+AUTH_LDAP_SERVER = os.getenv("AUTH_LDAP_SERVER", "")
+# Set to True if connecting on port 389 with StartTLS
+AUTH_LDAP_USE_TLS = os.getenv("AUTH_LDAP_USE_TLS", "false").lower() == "true"
+AUTH_LDAP_BIND_USER = os.getenv("AUTH_LDAP_BIND_USER", "")
+AUTH_LDAP_BIND_PASSWORD = os.getenv("AUTH_LDAP_BIND_PASSWORD", "")
+
+AUTH_LDAP_FIRSTNAME_FIELD = "givenName"
+AUTH_LDAP_LASTNAME_FIELD = "sn"
+AUTH_LDAP_EMAIL_FIELD = "mail"
+
+AUTH_LDAP_SEARCH = os.getenv("AUTH_LDAP_SEARCH", "")
+AUTH_LDAP_UID_FIELD = os.getenv("AUTH_LDAP_UID_FIELD", "sAMAccountName")
+AUTH_ROLES_SYNC_AT_LOGIN = False 
+AUTH_ROLES_MAPPING = json.loads(os.getenv("AUTH_ROLES_MAPPING", "{}"))
+
+RECAPTCHA_PUBLIC_KEY = 'YOUR_GOOGLE_RECAPTCHA_SITE_KEY'
+RECAPTCHA_PRIVATE_KEY = 'YOUR_GOOGLE_RECAPTCHA_SECRET_KEY'
+
