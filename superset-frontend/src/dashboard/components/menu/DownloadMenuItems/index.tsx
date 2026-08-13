@@ -30,7 +30,6 @@ import { useDownloadScreenshot } from 'src/dashboard/hooks/useDownloadScreenshot
 import { MenuKeys } from 'src/dashboard/types';
 import downloadAsPdf from 'src/utils/downloadAsPdf';
 import downloadAsImage from 'src/utils/downloadAsImage';
-import handleResourceExport from 'src/utils/export';
 import {
   LOG_ACTIONS_DASHBOARD_DOWNLOAD_AS_PDF,
   LOG_ACTIONS_DASHBOARD_DOWNLOAD_AS_IMAGE,
@@ -91,16 +90,6 @@ export const useDownloadMenuItems = (
       addDangerToast(t('Sorry, something went wrong. Try again later.'));
     }
     logEvent?.(LOG_ACTIONS_DASHBOARD_DOWNLOAD_AS_IMAGE);
-  };
-
-  const onExportZip = async () => {
-    try {
-      await handleResourceExport('dashboard', [dashboardId], () => {});
-      addSuccessToast(t('Dashboard exported successfully'));
-    } catch (error) {
-      logging.error(error);
-      addDangerToast(t('Sorry, something went wrong. Try again later.'));
-    }
   };
 
   const onExportAsExample = async () => {
@@ -176,26 +165,22 @@ export const useDownloadMenuItems = (
         },
       ];
 
-  const exportMenuItems: MenuItem[] = [
-    {
-      key: 'export-yaml',
-      label: t('Export YAML'),
-      onClick: onExportZip,
-    },
-    ...(userCanExport
-      ? [
-          {
-            key: 'export-as-example',
-            label: t('Export as Example'),
-            onClick: onExportAsExample,
-          },
-        ]
-      : []),
-  ];
+  // ponytail: YAML export intentionally omitted here; use the list-view Export instead
+  const exportMenuItems: MenuItem[] = userCanExport
+    ? [
+        {
+          key: 'export-as-example',
+          label: t('Export as Example'),
+          onClick: onExportAsExample,
+        },
+      ]
+    : [];
 
   const children: MenuItem[] = [
     ...screenshotMenuItems,
-    { type: 'divider', key: 'export-divider' },
+    ...(exportMenuItems.length
+      ? ([{ type: 'divider', key: 'export-divider' }] as MenuItem[])
+      : []),
     ...exportMenuItems,
   ];
 

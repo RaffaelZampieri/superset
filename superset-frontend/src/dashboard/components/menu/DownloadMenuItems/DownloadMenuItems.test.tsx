@@ -87,7 +87,7 @@ test('Should render all menu items', () => {
   expect(screen.getByText('Download as Image')).toBeInTheDocument();
 
   // Export options
-  expect(screen.getByText('Export YAML')).toBeInTheDocument();
+  expect(screen.queryByText('Export YAML')).not.toBeInTheDocument();
   expect(screen.getByText('Export as Example')).toBeInTheDocument();
 });
 
