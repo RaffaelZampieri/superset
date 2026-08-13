@@ -39,6 +39,11 @@ COPY docker/ /app/docker/
 # Ensure npm can trust our corporate/self-signed CA during build by pointing
 # npm at the provided PEM file. The file is mounted/copied into /app/docker.
 ENV NPM_CONFIG_CAFILE=/app/docker/ssl/server.pem
+# ponytail: retries only; add a registry mirror if resets keep happening
+ENV NPM_CONFIG_FETCH_RETRIES=5 \
+    NPM_CONFIG_FETCH_RETRY_MAXTIMEOUT=180000 \
+    NPM_CONFIG_FETCH_TIMEOUT=600000 \
+    NPM_CONFIG_MAXSOCKETS=5
 RUN npm config set cafile /app/docker/ssl/server.pem || true
 RUN npm config set strict-ssl false || true
 # Arguments for build configuration
