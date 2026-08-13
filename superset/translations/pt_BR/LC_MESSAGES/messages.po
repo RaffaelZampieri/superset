@@ -4727,7 +4727,7 @@ msgstr "Excluir modelo?"
 
 #, fuzzy
 msgid "Delete User?"
-msgstr "Excluir consulta?"
+msgstr "Excluir usuário?"
 
 msgid "Delete all Really?"
 msgstr "Realmente excluir tudo?"
@@ -4768,7 +4768,7 @@ msgstr "Excluir este contêiner e salvar para remover essa mensagem."
 
 #, fuzzy
 msgid "Delete user"
-msgstr "Excluir consulta"
+msgstr "Excluir usuário"
 
 #, fuzzy, python-format
 msgid "Delete user registration"
@@ -5446,7 +5446,7 @@ msgstr "Editar log"
 
 #, fuzzy
 msgid "Edit User"
-msgstr "Editar consulta"
+msgstr "Editar usuário"
 
 #, fuzzy
 msgid "Edit alert"
@@ -5519,7 +5519,7 @@ msgstr "Editar intervalo de tempo"
 
 #, fuzzy
 msgid "Edit user"
-msgstr "Editar consulta"
+msgstr "Editar usuário"
 
 msgid "Edited"
 msgstr "Editado"
@@ -6069,11 +6069,10 @@ msgstr "Inverter a página atual"
 
 #, fuzzy
 msgid "Export YAML"
-msgstr "Nome do relatório"
+msgstr "Exportar YAML"
 
-#, fuzzy
 msgid "Export as Example"
-msgstr "Exportar para Excel"
+msgstr "Exportar como Exemplo"
 
 #, fuzzy
 msgid "Export cancelled"
@@ -6112,7 +6111,7 @@ msgstr "Exportar para Excel"
 
 #, fuzzy
 msgid "Export to PDF"
-msgstr "Exportar para YAML"
+msgstr "Exportar para PDF"
 
 #, fuzzy
 msgid "Export to Pivoted .CSV"
@@ -6120,15 +6119,14 @@ msgstr "Exportar para .CSV articulado"
 
 #, fuzzy
 msgid "Export to Pivoted Excel"
-msgstr "Exportar para .CSV articulado"
+msgstr "Exportar para Excel articulado"
 
 #, fuzzy
 msgid "Export to full .CSV"
 msgstr "Exportar para .CSV completo"
 
-#, fuzzy
 msgid "Export to full Excel"
-msgstr "Exportar para Excel"
+msgstr "Exportar para Excel completo"
 
 #, fuzzy
 msgid "Export to original .CSV"
@@ -7424,11 +7422,11 @@ msgstr "Inverter a página atual"
 
 #, fuzzy
 msgid "Is Active?"
-msgstr "Alerta está ativo"
+msgstr "Ativo?"
 
 #, fuzzy
 msgid "Is active?"
-msgstr "Alerta está ativo"
+msgstr "Está ativo?"
 
 msgid "Is certified"
 msgstr "É certificado"
