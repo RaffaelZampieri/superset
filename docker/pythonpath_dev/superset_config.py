@@ -214,6 +214,7 @@ TALISMAN_CONFIG = {
         }
 
 PUBLIC_ROLE_LIKE = "Gamma"
+FAB_ADD_SECURITY_API = True
 
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
 
