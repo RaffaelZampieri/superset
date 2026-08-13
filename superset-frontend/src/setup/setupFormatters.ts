@@ -91,6 +91,8 @@ export default function setupFormatters(
     .registerValue(
       'MEMORY_TRANSFER_RATE_BINARY',
       createMemoryFormatter({ binary: true, transfer: true }),
+    ).registerValue(
+      'Brazilian_Real', getNumberFormatter(',.2f', { currency: 'R$' }),
     );
 
   const timeFormatterRegistry = getTimeFormatterRegistry();
