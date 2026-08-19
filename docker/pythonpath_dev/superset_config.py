@@ -190,7 +190,7 @@ FEATURE_FLAGS = {
     'EMBEDDED_SUPERSET': True,
     'DISABLE_EMBEDDED_SUPERSET_LOGOUT': True,
     'GUEST_TOKEN': True,
-    'ALLOW_FULL_CSV_EXPORT': True,
+    'ALLOW_FULL_CSV_EXPORT': False,
 }
 
 #SESSION_COOKIE_SAMESITE = None
@@ -217,6 +217,8 @@ PUBLIC_ROLE_LIKE = "Gamma"
 FAB_ADD_SECURITY_API = True
 
 APP_ICON = "/static/assets/images/superset-logo-horiz.png"
+
+ROW_LIMIT=1000
 
 import ldap
 from flask_appbuilder.security.manager import AUTH_LDAP
